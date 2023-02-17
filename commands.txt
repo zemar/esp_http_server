@@ -1,0 +1,15 @@
+Build QEMU:
+brew install libgcrypt
+./configure --target-list=xtensa-softmmu \
+    --enable-gcrypt \
+    --enable-debug --enable-sanitizers \
+    --disable-strip --disable-user \
+    --disable-capstone --disable-vnc \
+    --disable-sdl --disable-gtk
+ninja -C build
+
+/Users/michael/.espressif/python_env/idf5.0_py3.10_env/bin/python /Users/michael/esp/esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 merge_bin -o merged_qemu.bin --flash_mode dout --flash_size 4MB --fill-flash-size 4MB 0x1000 bootloader/bootloader.bin 0x10000 simple.bin 0x8000 partition_table/partition-table.bin
+
+/Users/michael/.espressif/python_env/idf5.0_py3.10_env/bin/python /Users/michael/esp/esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 merge_bin --fill-flash-size 4MB -o merged_qemu.bin @flash_args
+
+~/Code/qemu/build/qemu-system-xtensa -nographic -machine esp32 -nic user,model=open_eth,id=lo0,hostfwd=tcp:127.0.0.1:8000-:80 -drive file=merged_qemu.bin,if=mtd,format=raw

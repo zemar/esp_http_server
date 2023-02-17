@@ -1,0 +1,10 @@
+{
+    "folders": [
+		{
+			"path": "../../esp_http_server"
+		},
+		{
+			"path": ".."
+		}
+	]
+}
